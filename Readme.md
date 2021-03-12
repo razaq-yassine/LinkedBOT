@@ -24,11 +24,12 @@ pip install -r requirements.txt
 ```
 
  Edit this files in " __constantss ":
-- account :
+- account:
 ```
 your_email
 your_password
 ```
+###### If you ever want to make a pull request, the "account" file is untracked by git
 - interestsList
 ```
 interest1

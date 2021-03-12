@@ -1,23 +1,37 @@
 import time
 import sys
-import colorama
 
 from wait import wait_css, wait_xpath
 from selenium import webdriver
 from __banner.myBanner import bannerTop
 from datetime import datetime
 import random
+import platform
 
+
+def getdriver(browser):
+    Os = platform.platform().lower()
+    if "windows" in Os:
+        if "chrome" in browser:
+            return webdriver.Chrome(executable_path=r'./webdriver/windows/chromedriver')
+        elif "firefox" in browser:
+            return webdriver.Firefox(executable_path=r'./webdriver/geckodriver')
+    elif "linux" in Os:
+        if "chrome" in browser:
+            return webdriver.Chrome('./webdriver/linux/chromedriver')
+        elif "firefox" in browser:
+            return webdriver.Firefox(executable_path='./webdriver/linux/geckodriver')
+    exit("OS not supported")
 
 
 class LinkedBOT:
-    def __init__(self, email, password, key, geoURN):
+    def __init__(self, email, password, key, geoURN, browser):
         self.email = email
         self.password = password
         self.isLoggedIn = 0
         self.Key = "%20".join(key.split(' '))
         self.geoURN = geoURN
-        self.driver = webdriver.Chrome(executable_path=r'./webdriver/chromedriver')
+        self.driver = getdriver(browser)
         self.page = 0
         self.successful_invites = 0
         self.__Login()
@@ -101,13 +115,19 @@ def __getGeoUrn(localisation):
 
 
 def __getEmail():
-    with open(r'./__constants/account', "r") as f:
-        return f.read().split('\n')[0]
+    try:
+        with open(r'./__constants/account', "r") as f:
+            return f.read().split('\n')[0]
+    except:
+        exit("Problem getting email from __constants/account")
 
 
 def __getPassword():
-    with open(r'./__constants/account', "r") as f:
-        return f.read().split('\n')[1]
+    try:
+        with open(r'./__constants/account', "r") as f:
+            return f.read().split('\n')[1]
+    except:
+        exit("Problem getting password from __constants/account")
 
 
 def StartBot():
@@ -117,13 +137,17 @@ def StartBot():
     localisations = __getLocalisations()
     email = __getEmail()
     password = __getPassword()
+
     # banner
     sys.stdout.write(bannerTop())
-    print(colorama.Fore.YELLOW)
 
     # Menu
-    
+    print("     Browser : ")
+    print("1) Chrome")
+    print("2) Firefox")
+    input_Browser = input("Select your browser: ")
 
+    sys.stdout.write(bannerTop())
     print("     Interests : ")
     i = 0
     for interest in interests:
@@ -131,13 +155,16 @@ def StartBot():
         print(str(i) + ")  " + interest)
     input_Interest = input("Select your interest: ")
 
+    sys.stdout.write(bannerTop())
     print("     Location : ")
     i = 0
     for localisation in localisations:
         i += 1
         print(str(i) + ")  " + localisation)
-        
+
     input_Localisation = input("Select your localization: ")
+
+    sys.stdout.write(bannerTop())
     usersNum = input("Select the number of users to invite: ")
 
     # menu end
@@ -145,7 +172,8 @@ def StartBot():
     geoURN = __getGeoUrn(localisations[int(input_Localisation) - 1])
     print("Bot started at " + datetime.now().strftime("%H:%M:%S"))
 
-    L = LinkedBOT(email, password, interests[int(input_Interest) - 1], geoURN)
+    Browser = "firefox" if input_Browser == str(2) else "chrome"
+    L = LinkedBOT(email, password, interests[int(input_Interest) - 1], geoURN, Browser)
     L.Connect(int(usersNum))
     print("Total invites : " + str(L.successful_invites))
 
