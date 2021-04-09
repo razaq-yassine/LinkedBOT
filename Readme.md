@@ -5,7 +5,7 @@
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://github.com/razaq-yassine)
 
-Use at your own risk, LinkedIn has limitations, running multiple connection requests may be risky (required : 60/day [Dispatched])
+Use at your own risk, LinkedIn has limitations, running multiple connection requests may be risky (recommended : 60/day [Dispatched])
 
 ## Current Features
 
